@@ -8,7 +8,8 @@ output:
 
 
 ## Loading and preprocessing the data
-```{r LoadPreprocess, echo=TRUE}
+
+```r
 library(readr)
 suppressMessages(library(dplyr))
 library(ggplot2)
@@ -25,14 +26,13 @@ activity <- read_csv("activity.zip", col_types = col_types)
 
 #2. Process/Transform ...
   #Not Nessiary
-
 ```
 
 
 ## What is mean total number of steps taken per day?
 
-```{r meantotalperday, echo=TRUE}
 
+```r
 #1. Calculate the total number of steps taken per day
 
 perday <- activity  %>%
@@ -43,24 +43,25 @@ perday <- activity  %>%
 #2. Make a histogram of the total number of steps taken each day
 
 hist(perday$Steps)
+```
 
+![](PA1_template_files/figure-html/meantotalperday-1.png)<!-- -->
 
+```r
 #3. Calculate and report the mean and median of ...
 
 stepsmean <- mean(perday$Steps, na.rm = TRUE)
 
 stepsmedian <- median(perday$Steps, na.rm = TRUE)
-
 ```
-Then mean number of steps is `r comma(stepsmean,digits=0) ` and the median number of steps is `r comma(stepsmedian,digits=0)`.
+Then mean number of steps is 9,354 and the median number of steps is 10,395.
 
 
 
 ## What is the average daily activity pattern?
 
-```{r averageactivity, echo=TRUE}
 
-
+```r
 #1. Make a time series plot ...
 
 perinterval <- activity  %>%
@@ -69,31 +70,33 @@ perinterval <- activity  %>%
 
 ggplot(perinterval, aes(x=interval)) +
 geom_line(aes(y=DailyAverage)) + theme_set(theme_light()) +  ylab("Daily Average") + xlab("5-minute interval") 
+```
 
+![](PA1_template_files/figure-html/averageactivity-1.png)<!-- -->
 
+```r
 #2. Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 maxnumberofsteps <- perinterval[perinterval$DailyAverage == max(perinterval$DailyAverage),]
-
 ```
 
-Interval `r maxnumberofsteps$interval` is the 5-Minute interval which on average had the maximum number of steps accross all days. 
+Interval 835 is the 5-Minute interval which on average had the maximum number of steps accross all days. 
 
 
 
 ## Imputing missing values
 
-```{r MissingValues1, echo=TRUE}
 
+```r
 #1. Calculate and report the total number of missing values
 
 naactivity <- subset(activity, is.na(activity$steps))
 numberofnavalues <- nrow(naactivity)
 ```
-The total number of NA values is `r numberofnavalues`.
+The total number of NA values is 2304.
 
-```{r MissingValues2, echo=TRUE}
 
+```r
 #2. Devise a strategy for filling in all of the missing values.  
 #
 #  Using Mean for NA 5 minute intervals
@@ -120,23 +123,25 @@ cleanperday <- cleanactivity  %>%
   summarise(Steps = sum(steps,na.rm = TRUE))
 
 hist(cleanperday$Steps)
+```
 
+![](PA1_template_files/figure-html/MissingValues2-1.png)<!-- -->
 
+```r
 #New Mean and Median with NA's removed
 cleanstepsmean <- mean(cleanperday$Steps, na.rm = TRUE)
 
 cleanstepsmedian <- median(cleanperday$Steps, na.rm = TRUE)
-
 ```
 
-The mean number of steps once the missing values are replaced by average values is `r comma(cleanstepsmean,digits=0) ` and the median number of steps is `r comma(cleanstepsmedian,digits=0)`. The original histogram was skewed due to missing data. Replacing the missing values with the average interval value un-skewes the data and the resulting  histogram  looks more like a normal distribution.  This normalization moves the center of the histogram, increasing the mean and making  the mean and median values more closely align.
+The mean number of steps once the missing values are replaced by average values is 10,766 and the median number of steps is 10,766. The original histogram was skewed due to missing data. Replacing the missing values with the average interval value un-skewes the data and the resulting  histogram  looks more like a normal distribution.  This normalization moves the center of the histogram, increasing the mean and making  the mean and median values more closely align.
 
 
 
 ## Are there differences in activity patterns between weekdays and weekends?
 
-```{r WeekendDayPatterns, echo=TRUE}
 
+```r
 #1. Create a new factor variable in the dataset with two levels -- "weekday" 
 ### and "weekend" indicating whether a given date is a weekday or weekend day.
 
@@ -157,7 +162,8 @@ ggplot(weektypeinterval) +
 geom_line(aes(y=DailyAverage, x=interval)) + theme_set(theme_light()) +  
 ylab("Average Number Of Steps") + xlab("5-minute interval") +
 facet_grid(DayType ~ .)
-
 ```
+
+![](PA1_template_files/figure-html/WeekendDayPatterns-1.png)<!-- -->
 
 
